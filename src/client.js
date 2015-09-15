@@ -8,7 +8,14 @@ class Client {
   }
 
   creatingRank (statement, rank) {
-    return Promise.resolve();
+    var command = {
+      command: 'add',
+      domain: 'rank',
+      objectType: 'statement',
+      object: statement,
+      value: rank
+    };
+    return this.server.processing(command);
   }
 }
 

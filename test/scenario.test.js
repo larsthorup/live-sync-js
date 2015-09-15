@@ -17,7 +17,7 @@ describe('scenario', () => {
   });
 
   it('should create data locally', () => {
-    return this.clientSusan.server.gettingRankSum('Peace').should.become(4);
+    return this.clientSusan.server.repo.gettingRankSum('Peace').should.become(4);
   });
 
   it('should send data upstream', () => {
@@ -25,8 +25,8 @@ describe('scenario', () => {
     return this.clientSusan.server.synchronizingUpstream();
   });
 
-  it('should receive data from downstream', () => {
-    return this.serverEurope.gettingRankSum('Peace').should.become(4);
+  it.skip('should receive data from downstream', () => {
+    return this.serverEurope.repo.gettingRankSum('Peace').should.become(4);
   });
 
   it('should send data downstream to interested parties', () => {
@@ -34,7 +34,11 @@ describe('scenario', () => {
     return this.serverEurope.synchronizingUpstream();
   });
 
-  it('should receive data from upstream', () => {
-    return this.clientDavid.server.gettingRankSum('Peace').should.become(4);
+  it.skip('should receive data from upstream', () => {
+    return this.clientDavid.server.repo.gettingRankSum('Peace').should.become(4);
   });
+
+  // ToDo: joining a new server
+  // ToDo: taking a server offline for a while
+  // ToDo: bringing a server offline after a while
 });

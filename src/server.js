@@ -1,20 +1,24 @@
 'use strict';
+
+var Repo = require('./repo').Repo;
+
 class Server {
   constructor (name) {
-
+    this.repo = new Repo();
   }
 
   connectingUpstream (server) {
-    return Promise.resolve();
+    return Promise.resolve(); // ToDo: don't fake it
   }
 
   synchronizingUpstream (server) {
-    return Promise.resolve();
+    return Promise.resolve(); // ToDo: don't fake it
   }
 
-  gettingRankSum (statement) {
-    return Promise.resolve(4);
+  processing (command) {
+    return this.repo.processing(command);
   }
+
 }
 
 module.exports = {
