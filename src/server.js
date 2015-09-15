@@ -4,12 +4,13 @@ var Repo = require('./repo').Repo;
 
 class Server {
   constructor (name) {
-    this.repo = new Repo();
-    this.commandsForUpstream = [];
+    Object.assign(this, {
+      repo: new Repo(),
+      commandsForUpstream: []
+    });
   }
 
   connectingUpstream (server) {
-    // ToDo: use injected (websocket or stub) protocol instead of a direct reference
     this.upstreamServer = server;
     return Promise.resolve();
   }
@@ -19,20 +20,27 @@ class Server {
     if (this.upstreamServer) {
       var commandsForUpstream = this.commandsForUpstream;
       this.commandsForUpstream = [];
-      sending = commandsForUpstream.map(cmd => this.upstreamServer.processing(cmd));
+      sending = commandsForUpstream.map(cmd => this.upstreamServer.processingFromDownstream(cmd));
     } else {
       sending = [];
     }
-    // ToDo: receive new commands from upstream and process them
+    // ToDo: receive relevant new commands from upstream and process them
     var receiving = [];
     return Promise.all(sending.concat(receiving));
   }
 
-  processing (command) {
+  processingFromDownstream (command) {
     this.commandsForUpstream.push(command);
-    return this.repo.processing(command);
+    return this.processing(command);
   }
 
+  processingFromUpstream (command) {
+    return this.processing(command);
+  }
+
+  processing (command) {
+    return this.repo.processing(command);
+  }
 }
 
 module.exports = {

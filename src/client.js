@@ -4,18 +4,19 @@ var Server = require('./server').Server;
 
 class Client {
   constructor (name) {
-    this.server = new Server(name);
+    Object.assign(this, {
+      id: name,
+      server: new Server(name)
+    });
   }
 
   creatingRank (statement, rank) {
-    var command = {
-      command: 'add',
-      domain: 'rank',
-      objectType: 'statement',
+    var command = this.server.repo.makeAddRankCommand({
+      originator: this.id,
       object: statement,
       value: rank
-    };
-    return this.server.processing(command);
+    });
+    return this.server.processingFromDownstream(command);
   }
 }
 

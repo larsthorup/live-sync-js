@@ -12,6 +12,7 @@
   "version": "0.1.0",
   "description": "Live Synchronization in JavaScript",
   "dependencies": {
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
     "chai": "^3.0.0",
