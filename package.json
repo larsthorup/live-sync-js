@@ -1,0 +1,32 @@
+{
+  "name": "live-sync-js",
+  "author": {
+    "name": "Lars Thorup",
+    "web": "https://github.com/larsthorup"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/larsthorup/live-sync-js.git"
+  },
+  "version": "0.1.0",
+  "description": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "coveralls": "^2.11.2",
+    "istanbul": "^0.3.0",
+    "mocha": "^2.0.1",
+    "semistandard": "^7.0.2",
+    "sinon": "^1.10.3",
+    "sinon-chai": "^2.5.0"
+  },
+  "scripts": {
+    "lint": "semistandard --verbose",
+    "mocha": "istanbul --config=test/istanbul.conf.js cover node_modules/mocha/bin/_mocha",
+    "test": "npm run lint && npm run mocha",
+    "coveralls": "coveralls < output/coverage/lcov.info",
+    "travis": "npm test && npm run coveralls"
+  }
+}
