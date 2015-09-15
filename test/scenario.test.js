@@ -8,6 +8,7 @@ describe('scenario', () => {
   before(() => {
     this.clientSusan = new Client('Susan');
     this.clientDavid = new Client('David');
+    this.clientAlbert = new Client('David');
     this.serverEurope = new Server('Europe');
     return this.clientSusan.server.connectingUpstream(this.serverEurope);
   });
@@ -25,7 +26,7 @@ describe('scenario', () => {
     return this.clientSusan.server.synchronizingUpstream();
   });
 
-  it.skip('should receive data from downstream', () => {
+  it('should receive data from downstream', () => {
     return this.serverEurope.repo.gettingRankSum('Peace').should.become(4);
   });
 
@@ -34,11 +35,17 @@ describe('scenario', () => {
     return this.serverEurope.synchronizingUpstream();
   });
 
-  it.skip('should receive data from upstream', () => {
+  it.skip('should receive data downstream if interested', () => {
     return this.clientDavid.server.repo.gettingRankSum('Peace').should.become(4);
+  });
+
+  it.skip('should not receive data downstream if not interested', () => {
+    return this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0);
   });
 
   // ToDo: joining a new server
   // ToDo: taking a server offline for a while
   // ToDo: bringing a server offline after a while
+  // ToDo: retry synchronization when it fails
+  // ToDo: throttle synchronization to control overhead
 });
