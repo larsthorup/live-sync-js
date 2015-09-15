@@ -1,6 +1,6 @@
 'use strict';
 
-var Server = require('./server').Server;
+let Server = require('./server').Server;
 
 class Client {
   constructor (name) {
@@ -11,7 +11,7 @@ class Client {
   }
 
   creatingRank (statement, rank) {
-    var command = this.server.repo.makeAddRankCommand({
+    let command = this.server.repo.makeAddRankCommand({
       originator: this.id,
       object: statement,
       value: rank

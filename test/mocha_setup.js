@@ -1,6 +1,8 @@
-var chai = require('chai');
-var sinonChai = require('sinon-chai');
-var chaiAsPromised = require('chai-as-promised');
+'use strict';
+
+let chai = require('chai');
+let sinonChai = require('sinon-chai');
+let chaiAsPromised = require('chai-as-promised');
 
 // Chai setup
 chai.should();

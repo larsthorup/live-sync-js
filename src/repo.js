@@ -1,6 +1,6 @@
 'use strict';
 
-var uuid = require('uuid').v4;
+let uuid = require('uuid').v4;
 
 class Repo {
   constructor () {
@@ -34,7 +34,7 @@ class Repo {
   }
 
   gettingRankSum (statement) {
-    var rankSum = this.ranks.reduce((sum, r) => sum + r.rank, 0);
+    let rankSum = this.ranks.reduce((sum, r) => sum + r.rank, 0);
     return Promise.resolve(rankSum);
   }
 }

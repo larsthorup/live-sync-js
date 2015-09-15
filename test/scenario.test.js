@@ -1,7 +1,9 @@
 /* eslint-env mocha */
 
-var Client = require('../src/client').Client;
-var Server = require('../src/server').Server;
+'use strict';
+
+let Client = require('../src/client').Client;
+let Server = require('../src/server').Server;
 
 // Note: being a scenario test, the individual it() blocks are not meant to be run in isolation
 describe('scenario', () => {
@@ -10,7 +12,12 @@ describe('scenario', () => {
     this.clientDavid = new Client('David');
     this.clientAlbert = new Client('David');
     this.serverEurope = new Server('Europe');
-    return this.clientSusan.server.connectingUpstream(this.serverEurope);
+    let connecting = [
+      this.clientSusan.server.connectingUpstream(this.serverEurope),
+      this.clientDavid.server.connectingUpstream(this.serverEurope),
+      this.clientAlbert.server.connectingUpstream(this.serverEurope)
+    ];
+    return Promise.all(connecting);
   });
 
   it('should create data', () => {
@@ -33,7 +40,7 @@ describe('scenario', () => {
     return this.clientDavid.server.synchronizingUpstream();
   });
 
-  it.skip('should receive data downstream if interested', () => {
+  it('should receive data downstream if interested', () => {
     return this.clientDavid.server.repo.gettingRankSum('Peace').should.become(4);
   });
 
@@ -41,7 +48,7 @@ describe('scenario', () => {
     return this.clientAlbert.server.synchronizingUpstream();
   });
 
-  it('should not receive data downstream if not interested', () => {
+  it.skip('should not receive data downstream if not interested', () => {
     return this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0);
   });
 

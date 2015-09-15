@@ -1,12 +1,12 @@
 'use strict';
 
-var Repo = require('./repo').Repo;
+let Repo = require('./repo').Repo;
 
 class Server {
   constructor (name) {
     Object.assign(this, {
       repo: new Repo(),
-      commandsForUpstream: []
+      processedCommands: {}
     });
   }
 
@@ -16,29 +16,45 @@ class Server {
   }
 
   synchronizingUpstream (server) {
-    var sending;
+    let sending = [];
     if (this.upstreamServer) {
-      var commandsForUpstream = this.commandsForUpstream;
-      this.commandsForUpstream = [];
-      sending = commandsForUpstream.map(cmd => this.upstreamServer.processingFromDownstream(cmd));
-    } else {
-      sending = [];
+      // ToDo: optimization: only send new commands
+      for (let cmdId in this.processedCommands) {
+        let cmd = this.processedCommands[cmdId];
+        sending.push(this.upstreamServer.processingFromDownstream(cmd));
+      }
     }
     // ToDo: receive relevant new commands from upstream and process them
-    var receiving = [];
+    let receiving = [];
+    if (this.upstreamServer) {
+      // ToDo: optimization: only retrieve new commands
+      let upstreamCommands = this.upstreamServer.processedCommands;
+      for (let cmdId in upstreamCommands) {
+        let cmd = upstreamCommands[cmdId];
+        receiving.push(this.processingFromUpstream(cmd));
+      }
+    }
     return Promise.all(sending.concat(receiving));
   }
 
   processingFromDownstream (command) {
-    this.commandsForUpstream.push(command);
-    return this.processing(command);
+    if (!this.processedCommands[command.id]) {
+      return this.processing(command);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   processingFromUpstream (command) {
-    return this.processing(command);
+    if (!this.processedCommands[command.id]) {
+      return this.processing(command);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   processing (command) {
+    this.processedCommands[command.id] = command;
     return this.repo.processing(command);
   }
 }
