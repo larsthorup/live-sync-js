@@ -1,11 +1,13 @@
 'use strict';
 
+var Server = require('./server').Server;
+
 class Client {
   constructor (name) {
-
+    this.server = new Server(name);
   }
 
-  ranking (statement, rank) {
+  creatingRank (statement, rank) {
     return Promise.resolve();
   }
 }

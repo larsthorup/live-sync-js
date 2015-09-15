@@ -10,11 +10,12 @@
     "url": "https://github.com/larsthorup/live-sync-js.git"
   },
   "version": "0.1.0",
-  "description": "",
+  "description": "Live Synchronization in JavaScript",
   "dependencies": {
   },
   "devDependencies": {
     "chai": "^3.0.0",
+    "chai-as-promised": "^5.0.0",
     "coveralls": "^2.11.2",
     "istanbul": "^0.3.0",
     "mocha": "^2.0.1",
