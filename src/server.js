@@ -10,31 +10,29 @@ class Server {
     });
   }
 
-  connectingUpstream (server) {
-    this.upstreamServer = server;
+  connectingUpstream (connection) {
+    this.upstreamConnection = connection;
     return Promise.resolve();
   }
 
   synchronizingUpstream (server) {
-    let sending = [];
-    if (this.upstreamServer) {
-      // ToDo: optimization: only send new commands
-      for (let cmdId in this.processedCommands) {
-        let cmd = this.processedCommands[cmdId];
-        sending.push(this.upstreamServer.processingFromDownstream(cmd));
-      }
+    if (this.upstreamConnection) {
+      return this.upstreamConnection.receivingCommands().then(upstreamCommands => {
+        let sending = [];
+        let receiving = [];
+        for (let cmdId in this.processedCommands) {
+          let cmd = this.processedCommands[cmdId];
+          sending.push(this.upstreamConnection.sendingCommand(cmd));
+        }
+        for (let cmdId in upstreamCommands) {
+          let cmd = upstreamCommands[cmdId];
+          receiving.push(this.processingFromUpstream(cmd));
+        }
+        return Promise.all(sending.concat(receiving));
+      });
+    } else {
+      return Promise.resolve();
     }
-    // ToDo: receive relevant new commands from upstream and process them
-    let receiving = [];
-    if (this.upstreamServer) {
-      // ToDo: optimization: only retrieve new commands
-      let upstreamCommands = this.upstreamServer.processedCommands;
-      for (let cmdId in upstreamCommands) {
-        let cmd = upstreamCommands[cmdId];
-        receiving.push(this.processingFromUpstream(cmd));
-      }
-    }
-    return Promise.all(sending.concat(receiving));
   }
 
   processingFromDownstream (command) {
