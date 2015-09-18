@@ -75,7 +75,9 @@ describe('scenario', () => {
     this.serverEurope.repo.gettingRankSum('Peace').should.become(4)
   );
 
-  // ToDo: command line interface
+  // ToDo: command line interface (cli --client --port 1778 --upstream localhost:1779 --monitor localhost:1770)
+  // ToDo: monitoring
+  // ToDo: command line scenario runner (clitest)
   // ToDo: multi level sync
   // ToDo: aggregate rank sum instead of calculating
   // ToDo: trigger synchronization automatically from the changed data

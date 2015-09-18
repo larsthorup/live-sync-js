@@ -12,6 +12,8 @@
   "version": "0.1.0",
   "description": "Live Synchronization in JavaScript",
   "dependencies": {
+    "meow": "^3.0.0",
+    "restify": "^3.0.1",
     "uuid": "^2.0.1"
   },
   "devDependencies": {
