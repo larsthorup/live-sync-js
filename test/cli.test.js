@@ -28,7 +28,11 @@ function logUntilExit (process, next) {
   process.stdout.on('data', function (data) {
     stdout += data;
   });
+  var stderr = '';
+  process.stderr.on('data', function (data) {
+    stderr += data;
+  });
   process.on('exit', (code, signal) => {
-    next(code, signal, stdout);
+    next(code, signal, stdout, stderr);
   });
 }
