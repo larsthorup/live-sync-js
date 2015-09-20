@@ -2,7 +2,7 @@
 
 'use strict';
 
-let MonitorServer = require('../src/monitor').Server;
+let MonitorServer = require('../src/monitor/server').Server;
 let Process = require('./process').Process;
 
 describe('cli', function () {

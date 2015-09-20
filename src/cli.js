@@ -6,7 +6,7 @@ let Client = require('./client').Client;
 let Listener = require('./listener').Listener;
 let Server = require('./server').Server;
 let SocketConnection = require('./socketConnection').SocketConnection;
-let MonitorClient = require('./monitor').Client;
+let MonitorClient = require('./monitor/client').Client;
 
 let help = `Usage:
   node src/cli [options]
@@ -29,32 +29,33 @@ if (!args.flags.port) {
 
 let client = args.flags.client ? new Client(args.flags.name) : null;
 let server = client ? client.server : new Server(args.flags.name);
-
 let monitor = new MonitorClient(args.flags.monitor);
+function exit (signal) {
+  console.log(`${signal} received`);
+  monitor.logging({
+    name: server.name,
+    action: 'stopped'
+  }).then(() => {
+    monitor.disconnect();
+    process.exit(0);
+  });
+}
+['SIGTERM', 'SIGINT'].forEach(signal => process.on(signal, () => exit(signal)));
 
 monitor.connecting().then(() => {
-  var listenerOptions = Object.assign({}, args.flags, {monitor});
-  let listeningDownstream = new Listener(listenerOptions).listening();
+  let listenerOptions = Object.assign({}, args.flags);
+  let listener = new Listener(listenerOptions);
+  let listeningDownstream = listener.listening();
   let bootingSteps = [listeningDownstream];
   if (args.flags.upstream) {
     let connectingUpstream = SocketConnection.connecting(server, args.flags.upstream);
     bootingSteps.push(connectingUpstream);
   }
-  function exit () {
-    monitor.logging({name: server.name, action: 'stopped'}).then(() => {
-      monitor.disconnect();
-      process.exit(0);
-    });
-  }
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM received');
-    exit();
+  return Promise.all(bootingSteps).then(() => {
+    return monitor.logging({name: server.name, action: 'started'});
+  }).then(() => {
+    return listener.closing();
   });
-  process.on('SIGINT', () => {
-    console.log('SIGINT received');
-    exit();
-  });
-  return Promise.all(bootingSteps);
 }).then(() => {
   process.exit(0);
 }).catch(err => {

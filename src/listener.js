@@ -22,18 +22,22 @@ class Listener {
       });
       this.socketServer.on('connection', this.onConnect.bind(this));
 
-      server.on('close', () => {
-        this.log(`${server.name} closing down`);
-        resolve();
+      this.socketClosing = new Promise((resolve) => {
+        server.on('close', () => {
+          this.log(`${server.name} closing down`);
+          resolve();
+        });
       });
 
       server.listen(this.port, () => {
         this.log(`${server.name} listening at ${server.url}`);
-        this.monitor.logging({name: server.name, action: 'started'});
+        resolve();
       });
-
-      // ToDo: resolve when up and running, then have another, listener.closing().then()...
     });
+  }
+
+  closing () {
+    return this.socketClosing;
   }
 
   onConnect (connection) {

@@ -5,6 +5,7 @@ let Repo = require('./repo').Repo;
 class Server {
   constructor (name) {
     Object.assign(this, {
+      name,
       repo: new Repo(),
       processedCommands: {}
     });
