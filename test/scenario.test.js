@@ -13,10 +13,12 @@ describe('scenario', () => {
     this.clientDavid = new Client('David');
     this.clientAlbert = new Client('David');
     this.serverEurope = new Server('Europe');
+    this.serverGlobal = new Server('Global');
     let connecting = [
       StubConnection.connecting(this.clientSusan.server, this.serverEurope),
       StubConnection.connecting(this.clientDavid.server, this.serverEurope),
-      StubConnection.connecting(this.clientAlbert.server, this.serverEurope)
+      StubConnection.connecting(this.clientAlbert.server, this.serverEurope),
+      StubConnection.connecting(this.serverEurope, this.serverGlobal)
     ];
     return Promise.all(connecting);
   });
@@ -57,8 +59,20 @@ describe('scenario', () => {
     this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0)
   );
 
-  it('should ignore synchronization when no upstream server', () =>
+  it('should send data further upstream', () =>
     this.serverEurope.synchronizingUpstream()
+  );
+
+  it('should transmit no more than 1 commands on sync', () =>
+    this.serverEurope.upstreamConnection.resetCommandCount().should.equal(1)
+  );
+
+  it('should receive data from further downstream', () =>
+    this.serverGlobal.repo.gettingRankSum('Peace').should.become(4)
+  );
+
+  it('should ignore synchronization when no upstream server', () =>
+    this.serverGlobal.synchronizingUpstream()
   );
 
   it('should send data upstream', () =>
@@ -75,7 +89,6 @@ describe('scenario', () => {
     this.serverEurope.repo.gettingRankSum('Peace').should.become(4)
   );
 
-  // ToDo: multi level sync
   // ToDo: aggregate rank sum instead of calculating
   // ToDo: trigger synchronization automatically from the changed data
   // ToDo: joining a new server
