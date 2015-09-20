@@ -13,7 +13,7 @@ class Listener {
 
   listening () {
     return new Promise((resolve, reject) => {
-      var server = restify.createServer({
+      let server = restify.createServer({
         name: this.name
       });
 
@@ -22,14 +22,17 @@ class Listener {
       });
       this.socketServer.on('connection', this.onConnect.bind(this));
 
-      server.listen(this.port, () => {
-        this.log(`${server.name} listening at ${server.url}`);
-      });
-
       server.on('close', () => {
         this.log(`${server.name} closing down`);
         resolve();
       });
+
+      server.listen(this.port, () => {
+        this.log(`${server.name} listening at ${server.url}`);
+        this.monitor.logging({name: server.name, action: 'started'});
+      });
+
+      // ToDo: resolve when up and running, then have another, listener.closing().then()...
     });
   }
 

@@ -77,6 +77,7 @@ describe('scenario', () => {
 
   // ToDo: command line interface (cli --client --port 1778 --upstream localhost:1779 --monitor localhost:1770)
   // ToDo: monitoring
+  // ToDo: extract larsthorup/channel-js (npm: @larsthorup/channel)
   // ToDo: command line scenario runner (clitest)
   // ToDo: multi level sync
   // ToDo: aggregate rank sum instead of calculating
