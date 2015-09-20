@@ -5,7 +5,9 @@ let WebSocket = require('ws');
 
 class Server {
   constructor (port) {
-    Object.assign(this, {port});
+    Object.assign(this, {port}, {
+      expectings: []
+    });
   }
 
   listening () {
@@ -21,30 +23,34 @@ class Server {
 
       this.serverClosing = new Promise((resolve, reject) => {
         this.server.on('close', () => {
-          // console.log('Monitor: stopped');
           resolve();
         });
       });
 
       this.server.listen(this.port, () => {
-        // console.log('Monitor: started');
         resolve();
       });
     });
   }
 
   onConnect (connection) {
-    // console.log('Monitor: connection established');
     connection.on('close', function (code, message) {
-      // console.log('Monitor: connection closed');
     });
     connection.on('message', this.onMessage.bind(this));
   }
 
   onMessage (data) {
-    // console.log('Monitor: message received', data);
-    // var message = JSON.parse(data);
-    // ToDo: add to channel
+    let message = JSON.parse(data);
+    let messageString = JSON.stringify(message); // Note: use this node engine's JSON stringify
+    for (let i = 0; i < this.expectings.length; ++i) {
+      if (messageString === this.expectings[i].messageString) {
+        let resolve = this.expectings[i].resolve;
+        this.expectings.splice(i, 1);
+        resolve();
+        return;
+      }
+    }
+    console.log('Monitor: ignoring message: ', message);
   }
 
   closing () {
@@ -52,14 +58,9 @@ class Server {
     return this.serverClosing;
   }
 
-  logging (expectedMessage) {
-    // ToDo: pull from channel
+  expecting (message) {
     return new Promise((resolve) => {
-      // console.log('logging');
-      setTimeout(() => {
-        // console.log('resolve');
-        resolve();
-      }, 1000);
+      this.expectings.push({messageString: JSON.stringify(message), resolve});
     });
   }
 }
@@ -94,7 +95,6 @@ class Client {
       return new Promise((resolve) => {
         let data = JSON.stringify(message);
         this.socket.send(data, () => {
-          // console.log('arguments', arguments);
           resolve();
         });
       });

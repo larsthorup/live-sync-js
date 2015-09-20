@@ -8,7 +8,8 @@ module.exports = function () {
       {pattern: 'test/**/*.test.js', ignore: true}
     ],
     tests: [
-      'test/**/*.test.js'
+      'test/**/*.test.js',
+      {pattern: 'test/cli.test.js', ignore: true}
     ],
     env: {
       type: 'node',

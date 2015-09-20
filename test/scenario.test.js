@@ -53,7 +53,7 @@ describe('scenario', () => {
     this.clientAlbert.server.synchronizingUpstream()
   );
 
-  it.skip('should not receive data downstream if not interested', () =>
+  it.skip('should not receive data downstream if not interested', () => // ToDo
     this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0)
   );
 
@@ -75,10 +75,6 @@ describe('scenario', () => {
     this.serverEurope.repo.gettingRankSum('Peace').should.become(4)
   );
 
-  // ToDo: command line interface (cli --client --port 1778 --upstream localhost:1779 --monitor localhost:1770)
-  // ToDo: monitoring
-  // ToDo: extract larsthorup/channel-js (npm: @larsthorup/channel)
-  // ToDo: command line scenario runner (clitest)
   // ToDo: multi level sync
   // ToDo: aggregate rank sum instead of calculating
   // ToDo: trigger synchronization automatically from the changed data

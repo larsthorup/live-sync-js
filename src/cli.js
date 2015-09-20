@@ -56,9 +56,8 @@ monitor.connecting().then(() => {
   });
   return Promise.all(bootingSteps);
 }).then(() => {
-  // console.log('normal exit')
   process.exit(0);
 }).catch(err => {
-  console.log(err);
+  console.error(err);
   process.exit(1);
 });
