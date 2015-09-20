@@ -50,7 +50,13 @@ class Listener {
       // subscriptions.unsubscribeClient(this.clientId);
       // delete connections[this.clientId];
     });
-    // connection.on('message', onMessage);
+    connection.on('message', this.onMessage.bind(this));
+  }
+
+  onMessage (data) {
+    var message = JSON.parse(data);
+    console.log('received', message);
+    // ToDo: propagate to server
   }
 }
 

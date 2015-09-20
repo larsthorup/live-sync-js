@@ -24,8 +24,15 @@ class SocketConnection {
   }
 
   sendingCommand (cmd) {
-    // ToDo: send command on socket
-    return Promise.resolve();
+    return new Promise((resolve) => {
+      var message = {
+        type: 'send-command',
+        data: cmd
+      };
+      this.downstreamServer.upstreamConnection.upstreamSocket.send(JSON.stringify(message), () => {
+        console.log('sent', cmd);
+      });
+    });
   }
 
   receivingCommands () {

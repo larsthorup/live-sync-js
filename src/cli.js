@@ -52,6 +52,12 @@ monitor.connecting().then(() => {
     bootingSteps.push(connectingUpstream);
   }
   return Promise.all(bootingSteps).then(() => {
+    if (client) {
+      process.stdin.on('data', chunk => {
+        client.creatingRank('Peace', parseInt(chunk, 10));
+        client.server.synchronizingUpstream();
+      });
+    }
     return monitor.logging({name: server.name, action: 'started'});
   }).then(() => {
     return listener.closing();
