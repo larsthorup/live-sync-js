@@ -1,6 +1,6 @@
 'use strict';
 
-let ws = require('ws');
+let WebSocket = require('ws');
 
 // ToDo: extend common ConnectionBase base clase
 class SocketConnection {
@@ -10,7 +10,7 @@ class SocketConnection {
 
   static connecting (downstreamServer, upstreamConnectionString) {
     return new Promise((resolve, reject) => {
-      let upstreamSocket = new ws.WebSocket(upstreamConnectionString);
+      let upstreamSocket = new WebSocket(upstreamConnectionString);
       upstreamSocket.on('open', () => {
         let connection = new SocketConnection(downstreamServer, upstreamSocket);
         downstreamServer.connectingUpstream(connection).then(() => {

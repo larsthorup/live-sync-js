@@ -26,11 +26,11 @@ describe('cli', function () {
   });
 
   describe('starting a server', function () {
-    beforeEach(function () {
+    before(function () {
       this.server = new Process('node src/cli --port 1771 --name europe --monitor ws://localhost:1770');
     });
 
-    afterEach(function (done) {
+    after(function (done) {
       this.server.closing().then(done);
       this.server.terminate();
     });
@@ -39,6 +39,24 @@ describe('cli', function () {
       // ToDo: why can't I just return the promise here?
       monitor.expecting({name: 'europe', action: 'started'}).then(() => {
         done();
+      });
+    });
+
+    describe('starting a client', function () {
+      before(function () {
+        this.client = new Process('node src/cli --client --port 1772 --name susan --monitor ws://localhost:1770 --upstream ws://localhost:1771');
+      });
+
+      after(function (done) {
+        this.client.closing().then(done);
+        this.client.terminate();
+      });
+
+      it('should monitor as started', function (done) {
+        // ToDo: why can't I just return the promise here?
+        monitor.expecting({name: 'susan', action: 'started'}).then(() => {
+          done();
+        });
       });
     });
   });
