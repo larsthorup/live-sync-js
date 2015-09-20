@@ -17,11 +17,10 @@ describe('cli', function () {
     return monitor.closing();
   });
 
-  it('should fail to start with invalid command line', (done) => {
+  it('should fail to start with invalid command line', function () {
     let cli = new Process('node src/cli');
-    cli.closing().then(() => {
+    return cli.closing().then(() => {
       cli.stdout.should.equal('Missing --port <number>\n');
-      done();
     });
   });
 
@@ -30,16 +29,14 @@ describe('cli', function () {
       this.server = new Process('node src/cli --port 1771 --name europe --monitor ws://localhost:1770');
     });
 
-    after(function (done) {
-      this.server.closing().then(done);
+    after(function () {
+      let closing = this.server.closing();
       this.server.terminate();
+      return closing;
     });
 
-    it('should monitor as started', function (done) {
-      // ToDo: why can't I just return the promise here?
-      monitor.expecting({name: 'europe', action: 'started'}).then(() => {
-        done();
-      });
+    it('should monitor as started', function () {
+      return monitor.expecting({name: 'europe', action: 'started'});
     });
 
     describe('starting a client', function () {
@@ -47,16 +44,14 @@ describe('cli', function () {
         this.client = new Process('node src/cli --client --port 1772 --name susan --monitor ws://localhost:1770 --upstream ws://localhost:1771');
       });
 
-      after(function (done) {
-        this.client.closing().then(done);
+      after(function () {
+        let closing = this.client.closing();
         this.client.terminate();
+        return closing;
       });
 
-      it('should monitor as started', function (done) {
-        // ToDo: why can't I just return the promise here?
-        monitor.expecting({name: 'susan', action: 'started'}).then(() => {
-          done();
-        });
+      it('should monitor as started', function () {
+        return monitor.expecting({name: 'susan', action: 'started'});
       });
     });
   });
