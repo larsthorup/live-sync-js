@@ -6,6 +6,7 @@ let MonitorServer = require('../src/monitor/server').Server;
 let Process = require('./process').Process;
 
 describe('cli', function () {
+  this.timeout(5000);
   var monitor;
 
   before(function () {
