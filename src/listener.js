@@ -55,10 +55,12 @@ class Listener {
 
   onMessage (data) {
     var message = JSON.parse(data);
-    console.log('received', message);
+    // console.log('received', message);
     switch (message.type) {
       case 'send-command':
         this.server.processingFromDownstream(message.data).then(() => {
+          return this.monitor.logging({name: this.server.name, action: 'command', from: message.data.originator});
+        }).then(() => {
           return this.server.repo.gettingRankSum();
         }).then(rankSum => {
           console.log('rank sum now:', rankSum);

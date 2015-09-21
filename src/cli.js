@@ -43,7 +43,7 @@ function exit (signal) {
 ['SIGTERM', 'SIGINT'].forEach(signal => process.on(signal, () => exit(signal)));
 
 monitor.connecting().then(() => {
-  let listenerOptions = Object.assign({}, args.flags, {server});
+  let listenerOptions = Object.assign({}, args.flags, {server, monitor});
   let listener = new Listener(listenerOptions);
   let listeningDownstream = listener.listening();
   let bootingSteps = [listeningDownstream];

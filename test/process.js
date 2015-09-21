@@ -11,6 +11,7 @@ class Process {
       stderr: '',
       running: true
     });
+    this.process.stdin.setEncoding('utf-8');
     this.process.stdout.on('data', data => {
       this.stdout += data;
     });
@@ -23,6 +24,10 @@ class Process {
       });
       if (this.exitHandler) (this.exitHandler)();
     });
+  }
+
+  write (line) {
+    this.process.stdin.write(line + '\n');
   }
 
   closing () {

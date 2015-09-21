@@ -54,6 +54,16 @@ describe('cli', function () {
       it('should monitor as started', function () {
         return monitor.expecting({name: 'susan', action: 'started'});
       });
+
+      describe('interacting with client', function () {
+        before(function () {
+          this.client.write('12');
+        });
+
+        it('should monitor as receiving command', function () {
+          return monitor.expecting({name: 'europe', action: 'command', from: 'susan'});
+        });
+      });
     });
   });
 });
