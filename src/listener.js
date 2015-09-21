@@ -56,7 +56,17 @@ class Listener {
   onMessage (data) {
     var message = JSON.parse(data);
     console.log('received', message);
-    // ToDo: propagate to server
+    switch (message.type) {
+      case 'send-command':
+        this.server.processingFromDownstream(message.data).then(() => {
+          return this.server.repo.gettingRankSum();
+        }).then(rankSum => {
+          console.log('rank sum now:', rankSum);
+        }).catch(err => {
+          console.log(err);
+        });
+        break;
+    }
   }
 }
 

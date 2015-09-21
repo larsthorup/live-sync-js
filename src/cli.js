@@ -43,7 +43,7 @@ function exit (signal) {
 ['SIGTERM', 'SIGINT'].forEach(signal => process.on(signal, () => exit(signal)));
 
 monitor.connecting().then(() => {
-  let listenerOptions = Object.assign({}, args.flags);
+  let listenerOptions = Object.assign({}, args.flags, {server});
   let listener = new Listener(listenerOptions);
   let listeningDownstream = listener.listening();
   let bootingSteps = [listeningDownstream];
@@ -54,8 +54,15 @@ monitor.connecting().then(() => {
   return Promise.all(bootingSteps).then(() => {
     if (client) {
       process.stdin.on('data', chunk => {
-        client.creatingRank('Peace', parseInt(chunk, 10));
-        client.server.synchronizingUpstream();
+        client.creatingRank('Peace', parseInt(chunk, 10)).then(() => {
+          return client.server.repo.gettingRankSum();
+        }).then(rankSum => {
+          console.log('rank sum now:', rankSum);
+        }).then(() => {
+          return client.server.synchronizingUpstream();
+        }).catch(err => {
+          console.log(err);
+        });
       });
     }
     return monitor.logging({name: server.name, action: 'started'});
