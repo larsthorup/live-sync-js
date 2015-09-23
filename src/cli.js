@@ -59,7 +59,7 @@ monitor.connecting().then(() => {
         }).then(rankSum => {
           console.log('rank sum now:', rankSum);
         }).then(() => {
-          return client.server.synchronizingUpstream();
+          return client.server.synchronizing();
         }).catch(err => {
           console.log(err);
         });

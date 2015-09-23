@@ -7,7 +7,8 @@ class Server {
     Object.assign(this, {
       name,
       repo: new Repo(),
-      processedCommands: {}
+      processedCommands: {},
+      downstreamConnections: []
     });
   }
 
@@ -16,21 +17,18 @@ class Server {
     return Promise.resolve();
   }
 
-  synchronizingUpstream (server) {
+  connectingDownstream (connection) {
+    this.downstreamConnections.push(connection);
+  }
+
+  synchronizing (server) {
     if (this.upstreamConnection) {
-      return this.upstreamConnection.receivingCommands().then(upstreamCommands => {
-        let sending = [];
-        let receiving = [];
-        for (let cmdId in this.processedCommands) {
-          let cmd = this.processedCommands[cmdId];
-          sending.push(this.upstreamConnection.sendingCommand(cmd));
-        }
-        for (let cmdId in upstreamCommands) {
-          let cmd = upstreamCommands[cmdId];
-          receiving.push(this.processingFromUpstream(cmd));
-        }
-        return Promise.all(sending.concat(receiving));
-      });
+      let sending = [];
+      for (let cmdId in this.processedCommands) {
+        let cmd = this.processedCommands[cmdId];
+        sending.push(this.upstreamConnection.sendingCommand(cmd));
+      }
+      return Promise.all(sending);
     } else {
       return Promise.resolve();
     }

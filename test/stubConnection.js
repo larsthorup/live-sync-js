@@ -10,18 +10,20 @@ class StubConnection {
 
   static connecting (downstreamServer, upstreamServer) {
     var connection = new StubConnection(downstreamServer, upstreamServer);
-    return downstreamServer.connectingUpstream(connection);
+    return downstreamServer.connectingUpstream(connection).then(() => {
+      return upstreamServer.connectingDownstream(connection);
+    });
   }
 
   sendingCommand (cmd) {
     ++this.commandCount;
-    return this.upstreamServer.processingFromDownstream(cmd);
-  }
-
-  receivingCommands () {
-    let commands = this.upstreamServer.processedCommands;
-    this.commandCount += Object.keys(commands).length;
-    return Promise.resolve(commands);
+    let processing = [];
+    processing.push(this.upstreamServer.processingFromDownstream(cmd));
+    // ToDo: extract this loop to base class
+    this.downstreamServer.downstreamConnections.forEach(downstreamConnection => {
+      processing.push(downstreamConnection.downstreamServer.processingFromUpstream(cmd));
+    });
+    return Promise.all(processing);
   }
 
   resetCommandCount () {

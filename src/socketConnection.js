@@ -32,13 +32,8 @@ class SocketConnection {
       this.downstreamServer.upstreamConnection.upstreamSocket.send(JSON.stringify(message), () => {
         console.log('sent', cmd);
       });
+      // ToDo: also send over downstreamConnections
     });
-  }
-
-  receivingCommands () {
-    // ToDo: request and receive commands from upstream
-    let commands = {};
-    return Promise.resolve(commands);
   }
 }
 

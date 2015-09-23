@@ -32,7 +32,7 @@ describe('scenario', () => {
   );
 
   it('should send data upstream', () =>
-    this.clientSusan.server.synchronizingUpstream()
+    this.clientSusan.server.synchronizing()
   );
 
   it('should transmit no more than 1 commands on sync', () =>
@@ -43,24 +43,8 @@ describe('scenario', () => {
     this.serverEurope.repo.gettingRankSum('Peace').should.become(4)
   );
 
-  it('should receive relevant data from upstream', () =>
-    this.clientDavid.server.synchronizingUpstream()
-  );
-
-  it('should receive data downstream if interested', () =>
-    this.clientDavid.server.repo.gettingRankSum('Peace').should.become(4)
-  );
-
-  it('should receive relevant data from upstream', () =>
-    this.clientAlbert.server.synchronizingUpstream()
-  );
-
-  it.skip('should not receive data downstream if not interested', () => // ToDo
-    this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0)
-  );
-
-  it('should send data further upstream', () =>
-    this.serverEurope.synchronizingUpstream()
+  it('should send data further upstream and downstream', () =>
+    this.serverEurope.synchronizing()
   );
 
   it('should transmit no more than 1 commands on sync', () =>
@@ -71,18 +55,26 @@ describe('scenario', () => {
     this.serverGlobal.repo.gettingRankSum('Peace').should.become(4)
   );
 
+  it('should receive data from upstream if interested', () =>
+    this.clientDavid.server.repo.gettingRankSum('Peace').should.become(4)
+  );
+
+  it.skip('should not receive data downstream if not interested', () => // ToDo
+    this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0)
+  );
+
   it('should ignore synchronization when no upstream server', () =>
-    this.serverGlobal.synchronizingUpstream()
+    this.serverGlobal.synchronizing()
   );
 
   it('should send data upstream', () =>
-    this.clientSusan.server.synchronizingUpstream()
+    this.clientSusan.server.synchronizing()
   );
 
   // ToDo: optimization: only send new commands
   // ToDo: optimization: only retrieve new commands
-  it('should transmit no more than 2 (should actually be 0) commands on sync', () =>
-    this.clientSusan.server.upstreamConnection.resetCommandCount().should.equal(2)
+  it('should transmit no more than 1 (should actually be 0) commands on sync', () =>
+    this.clientSusan.server.upstreamConnection.resetCommandCount().should.equal(1)
   );
 
   it('should receive data from downstream', () =>
@@ -98,4 +90,5 @@ describe('scenario', () => {
   // ToDo: throttle synchronization to control overhead
   // ToDo: try using swarm.js, share.js for this
   // ToDo: data versioning, migrations
+  // ToDo: distributed aggregation
 });
