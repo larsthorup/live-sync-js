@@ -21,7 +21,7 @@ class Server {
     this.downstreamConnections.push(connection);
   }
 
-  synchronizing (server) {
+  synchronizing () {
     let sending = [];
     for (let cmdId in this.processedCommands) {
       let cmd = this.processedCommands[cmdId];
@@ -37,7 +37,11 @@ class Server {
 
   receiving (command) {
     if (!this.hasSeen(command)) {
-      return this.processing(command).then(() => {
+      var receivingSteps = [
+        this.processing(command),
+        this.synchronizing()
+      ];
+      return Promise.all(receivingSteps).then(() => {
         return true; // true = was processed
       });
     } else {

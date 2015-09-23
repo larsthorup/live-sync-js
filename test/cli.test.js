@@ -31,7 +31,10 @@ describe('cli', function () {
     });
 
     after(function () {
-      let closing = this.server.closing();
+      let closing = this.server.closing().then(() => {
+        this.server.stderr.should.equal('');
+        // console.log('server:', this.server.stdout);
+      });
       this.server.terminate();
       return closing;
     });
@@ -46,7 +49,10 @@ describe('cli', function () {
       });
 
       after(function () {
-        let closing = this.client.closing();
+        let closing = this.client.closing().then(() => {
+          this.client.stderr.should.equal('');
+          // console.log('client:', this.client.stdout);
+        });
         this.client.terminate();
         return closing;
       });

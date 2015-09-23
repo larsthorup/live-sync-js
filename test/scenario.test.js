@@ -31,20 +31,12 @@ describe('scenario', () => {
     this.clientSusan.server.repo.gettingRankSum('Peace').should.become(4)
   );
 
-  it('should send data upstream', () =>
-    this.clientSusan.server.synchronizing()
-  );
-
   it('should transmit no more than 1 commands on sync', () =>
     this.clientSusan.server.upstreamConnection.resetCommandCount().should.equal(1)
   );
 
   it('should receive data from downstream', () =>
     this.serverEurope.repo.gettingRankSum('Peace').should.become(4)
-  );
-
-  it('should send data further upstream and downstream', () =>
-    this.serverEurope.synchronizing()
   );
 
   it('should transmit no more than 1 commands on sync', () =>
@@ -63,10 +55,6 @@ describe('scenario', () => {
     this.clientAlbert.server.repo.gettingRankSum('Peace').should.become(0)
   );
 
-  it('should ignore synchronization when no upstream server', () =>
-    this.serverGlobal.synchronizing()
-  );
-
   it('should send data upstream', () =>
     this.clientSusan.server.synchronizing()
   );
@@ -82,7 +70,6 @@ describe('scenario', () => {
   );
 
   // ToDo: aggregate rank sum instead of calculating
-  // ToDo: trigger synchronization automatically from the changed data
   // ToDo: joining a new server
   // ToDo: taking a server offline for a while
   // ToDo: bringing a server online after a while

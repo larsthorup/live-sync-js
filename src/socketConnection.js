@@ -30,21 +30,28 @@ class SocketConnection {
     return Promise.resolve(new SocketConnection(options));
   }
 
-  sendingCommandUpstream (cmd) {
+  sendingCommand (cmd) {
     return new Promise((resolve) => {
       var message = {
         type: 'send-command',
         data: cmd
       };
       this.socket.send(JSON.stringify(message), () => {
-        console.log('sent', cmd);
+        resolve();
       });
     });
   }
 
+  sendingCommandUpstream (cmd) {
+    return this.sendingCommand(cmd);
+  }
+
+  sendingCommandDownstream (cmd) {
+    return this.sendingCommand(cmd);
+  }
+
   onMessage (data) {
     var message = JSON.parse(data);
-    // console.log('received', message);
     switch (message.type) {
       case 'send-command':
         let cmd = message.data;

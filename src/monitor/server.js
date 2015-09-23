@@ -44,6 +44,7 @@ class Server {
     let messageString = JSON.stringify(message); // Note: use this node engine's JSON stringify
     for (let i = 0; i < this.expectings.length; ++i) {
       if (messageString === this.expectings[i].messageString) {
+        // console.log('Monitor: expected message: ', message);
         let resolve = this.expectings[i].resolve;
         this.expectings.splice(i, 1);
         resolve();
