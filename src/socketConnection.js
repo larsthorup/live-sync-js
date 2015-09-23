@@ -4,20 +4,18 @@ let WebSocket = require('ws');
 
 // ToDo: extend common ConnectionBase base clase
 class SocketConnection {
-  constructor (downstreamServer, upstreamSocket) {
-    Object.assign(this, {downstreamServer, upstreamSocket});
+  constructor (socket) {
+    Object.assign(this, {socket});
   }
 
-  static connecting (downstreamServer, upstreamConnectionString) {
+  static connectingUpstream (upstreamConnectionString) {
     return new Promise((resolve, reject) => {
-      let upstreamSocket = new WebSocket(upstreamConnectionString);
-      upstreamSocket.on('open', () => {
-        let connection = new SocketConnection(downstreamServer, upstreamSocket);
-        downstreamServer.connectingUpstream(connection).then(() => {
-          resolve(connection);
-        });
+      let socket = new WebSocket(upstreamConnectionString);
+      socket.on('open', () => {
+        let connection = new SocketConnection(socket);
+        resolve(connection);
       });
-      upstreamSocket.on('error', () => {
+      socket.on('error', () => {
         reject(new Error('failed connecting to upstream: ' + upstreamConnectionString));
       });
     });
@@ -29,7 +27,7 @@ class SocketConnection {
         type: 'send-command',
         data: cmd
       };
-      this.upstreamSocket.send(JSON.stringify(message), () => {
+      this.socket.send(JSON.stringify(message), () => {
         console.log('sent', cmd);
       });
     });

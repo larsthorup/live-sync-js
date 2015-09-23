@@ -22,19 +22,17 @@ class Server {
   }
 
   synchronizing (server) {
-    if (this.upstreamConnection) {
-      let sending = [];
-      for (let cmdId in this.processedCommands) {
-        let cmd = this.processedCommands[cmdId];
+    let sending = [];
+    for (let cmdId in this.processedCommands) {
+      let cmd = this.processedCommands[cmdId];
+      if (this.upstreamConnection) {
         sending.push(this.upstreamConnection.sendingCommandUpstream(cmd));
-        this.downstreamConnections.forEach(downstreamConnection => {
-          sending.push(downstreamConnection.sendingCommandDownstream(cmd));
-        });
       }
-      return Promise.all(sending);
-    } else {
-      return Promise.resolve();
+      this.downstreamConnections.forEach(downstreamConnection => {
+        sending.push(downstreamConnection.sendingCommandDownstream(cmd));
+      });
     }
+    return Promise.all(sending);
   }
 
   processingFromDownstream (command) {
