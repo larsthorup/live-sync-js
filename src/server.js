@@ -35,25 +35,17 @@ class Server {
     return Promise.all(sending);
   }
 
-  processingFromDownstream (command) {
-    if (!this.processedCommands[command.id]) {
-      return this.processing(command);
-    } else {
-      return Promise.resolve();
-    }
-  }
-
-  processingFromUpstream (command) {
-    if (!this.processedCommands[command.id]) {
-      return this.processing(command);
-    } else {
-      return Promise.resolve();
-    }
+  hasSeen (command) {
+    return !!this.processedCommands[command.id];
   }
 
   processing (command) {
-    this.processedCommands[command.id] = command;
-    return this.repo.processing(command);
+    if (!this.hasSeen(command)) {
+      this.processedCommands[command.id] = command;
+      return this.repo.processing(command);
+    } else {
+      return Promise.reject('processing() called with already-seen command');
+    }
   }
 }
 

@@ -61,15 +61,18 @@ class Listener {
     // console.log('received', message);
     switch (message.type) {
       case 'send-command':
-        this.server.processingFromDownstream(message.data).then(() => {
-          return this.monitor.logging({name: this.server.name, action: 'command', from: message.data.originator});
-        }).then(() => {
-          return this.server.repo.gettingRankSum();
-        }).then(rankSum => {
-          console.log('rank sum now:', rankSum);
-        }).catch(err => {
-          console.log(err);
-        });
+        let cmd = message.data;
+        if (!this.server.hasSeen(cmd)) {
+          this.server.processing(cmd).then(() => {
+            return this.monitor.logging({name: this.server.name, action: 'command', from: cmd.originator});
+          }).then(() => {
+            return this.server.repo.gettingRankSum();
+          }).then(rankSum => {
+            console.log('rank sum now:', rankSum);
+          }).catch(err => {
+            console.log(err);
+          });
+        }
         break;
     }
   }

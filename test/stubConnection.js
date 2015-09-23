@@ -17,11 +17,19 @@ class StubConnection {
 
   sendingCommandUpstream (cmd) {
     ++this.commandCount;
-    return this.upstreamServer.processingFromDownstream(cmd);
+    if (!this.upstreamServer.hasSeen(cmd)) {
+      return this.upstreamServer.processing(cmd);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   sendingCommandDownstream (cmd) {
-    return this.downstreamServer.processingFromUpstream(cmd);
+    if (!this.downstreamServer.hasSeen(cmd)) {
+      return this.downstreamServer.processing(cmd);
+    } else {
+      return Promise.resolve();
+    }
   }
 
   resetCommandCount () {

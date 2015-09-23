@@ -87,7 +87,7 @@ describe('scenario', () => {
   // ToDo: taking a server offline for a while
   // ToDo: bringing a server online after a while
   // ToDo: retry synchronization when it fails
-  // ToDo: throttle synchronization to control overhead
+  // ToDo: throttle synchronization to control overhead and prevent buffer overflows
   // ToDo: try using swarm.js, share.js for this
   // ToDo: data versioning, migrations
   // ToDo: distributed aggregation

@@ -16,7 +16,7 @@ class Client {
       object: statement,
       value: rank
     });
-    return this.server.processingFromDownstream(command);
+    return this.server.processing(command);
   }
 }
 
