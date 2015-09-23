@@ -37,9 +37,11 @@ class Server {
 
   receiving (command) {
     if (!this.hasSeen(command)) {
-      return this.processing(command);
+      return this.processing(command).then(() => {
+        return true; // true = was processed
+      });
     } else {
-      return Promise.resolve();
+      return Promise.resolve(false); // false = was ignored
     }
   }
 

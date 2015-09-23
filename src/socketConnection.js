@@ -48,17 +48,21 @@ class SocketConnection {
     switch (message.type) {
       case 'send-command':
         let cmd = message.data;
-        if (!this.server.hasSeen(cmd)) {
-          this.server.processing(cmd).then(() => {
-            return this.monitor.logging({name: this.server.name, action: 'command', from: cmd.originator});
-          }).then(() => {
-            return this.server.repo.gettingRankSum();
-          }).then(rankSum => {
-            console.log('rank sum now:', rankSum);
-          }).catch(err => {
-            console.log(err);
-          });
-        }
+        this.server.receiving(cmd).then(wasProcessed => {
+          if (wasProcessed) {
+            return this.monitor.logging({
+              name: this.server.name,
+              action: 'command',
+              from: cmd.originator
+            }).then(() => {
+              return this.server.repo.gettingRankSum();
+            }).then(rankSum => {
+              console.log('rank sum now:', rankSum);
+            });
+          }
+        }).catch(err => {
+          console.log(err);
+        });
         break;
     }
   }
