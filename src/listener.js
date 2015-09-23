@@ -3,6 +3,8 @@
 let restify = require('restify');
 let ws = require('ws');
 
+let SocketConnection = require('./socketConnection').SocketConnection;
+
 class Listener {
   constructor (options) {
     Object.assign(this, options, {
@@ -40,17 +42,18 @@ class Listener {
     return this.socketClosing;
   }
 
-  onConnect (connection) {
+  onConnect (socket) {
     let clientId = ++this.latestClientId;
-    connection.clientId = clientId;
-    // connections[clientId] = connection;
-    this.log('WebSocket connection established', clientId);
-    connection.on('close', function (code, message) {
-      console.log('WebSocket connection closed', this.clientId);
-      // subscriptions.unsubscribeClient(this.clientId);
-      // delete connections[this.clientId];
+    socket.clientId = clientId;
+    this.log(`connection from downstream ${clientId} established`);
+    socket.on('close', function (code, message) {
+      console.log(`connection from downstream ${this.clientId} closed`);
+      // ToDo: this.server.disconnectDownstream(connection);
     });
-    connection.on('message', this.onMessage.bind(this));
+    socket.on('message', this.onMessage.bind(this));
+    SocketConnection.connectingDownstream(socket).then(connection => {
+      return this.server.connectingDownstream(connection);
+    });
   }
 
   onMessage (data) {

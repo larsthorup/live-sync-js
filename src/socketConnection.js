@@ -2,7 +2,6 @@
 
 let WebSocket = require('ws');
 
-// ToDo: extend common ConnectionBase base clase
 class SocketConnection {
   constructor (socket) {
     Object.assign(this, {socket});
@@ -19,6 +18,10 @@ class SocketConnection {
         reject(new Error('failed connecting to upstream: ' + upstreamConnectionString));
       });
     });
+  }
+
+  static connectingDownstream (socket) {
+    return Promise.resolve(new SocketConnection(socket));
   }
 
   sendingCommandUpstream (cmd) {
