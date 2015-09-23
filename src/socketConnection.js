@@ -23,16 +23,15 @@ class SocketConnection {
     });
   }
 
-  sendingCommand (cmd) {
+  sendingCommandUpstream (cmd) {
     return new Promise((resolve) => {
       var message = {
         type: 'send-command',
         data: cmd
       };
-      this.downstreamServer.upstreamConnection.upstreamSocket.send(JSON.stringify(message), () => {
+      this.upstreamSocket.send(JSON.stringify(message), () => {
         console.log('sent', cmd);
       });
-      // ToDo: also send over downstreamConnections
     });
   }
 }

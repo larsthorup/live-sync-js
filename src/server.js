@@ -26,7 +26,10 @@ class Server {
       let sending = [];
       for (let cmdId in this.processedCommands) {
         let cmd = this.processedCommands[cmdId];
-        sending.push(this.upstreamConnection.sendingCommand(cmd));
+        sending.push(this.upstreamConnection.sendingCommandUpstream(cmd));
+        this.downstreamConnections.forEach(downstreamConnection => {
+          sending.push(downstreamConnection.sendingCommandDownstream(cmd));
+        });
       }
       return Promise.all(sending);
     } else {

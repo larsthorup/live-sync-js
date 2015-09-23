@@ -15,15 +15,13 @@ class StubConnection {
     });
   }
 
-  sendingCommand (cmd) {
+  sendingCommandUpstream (cmd) {
     ++this.commandCount;
-    let processing = [];
-    processing.push(this.upstreamServer.processingFromDownstream(cmd));
-    // ToDo: extract this loop to base class
-    this.downstreamServer.downstreamConnections.forEach(downstreamConnection => {
-      processing.push(downstreamConnection.downstreamServer.processingFromUpstream(cmd));
-    });
-    return Promise.all(processing);
+    return this.upstreamServer.processingFromDownstream(cmd);
+  }
+
+  sendingCommandDownstream (cmd) {
+    return this.downstreamServer.processingFromUpstream(cmd);
   }
 
   resetCommandCount () {
