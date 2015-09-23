@@ -50,31 +50,14 @@ class Listener {
       console.log(`connection from downstream ${this.clientId} closed`);
       // ToDo: this.server.disconnectDownstream(connection);
     });
-    socket.on('message', this.onMessage.bind(this));
-    SocketConnection.connectingDownstream(socket).then(connection => {
+    var connectionOptions = {
+      socket,
+      server: this.server,
+      monitor: this.monitor
+    };
+    SocketConnection.connectingDownstream(connectionOptions).then(connection => {
       return this.server.connectingDownstream(connection);
     });
-  }
-
-  onMessage (data) {
-    var message = JSON.parse(data);
-    // console.log('received', message);
-    switch (message.type) {
-      case 'send-command':
-        let cmd = message.data;
-        if (!this.server.hasSeen(cmd)) {
-          this.server.processing(cmd).then(() => {
-            return this.monitor.logging({name: this.server.name, action: 'command', from: cmd.originator});
-          }).then(() => {
-            return this.server.repo.gettingRankSum();
-          }).then(rankSum => {
-            console.log('rank sum now:', rankSum);
-          }).catch(err => {
-            console.log(err);
-          });
-        }
-        break;
-    }
   }
 }
 

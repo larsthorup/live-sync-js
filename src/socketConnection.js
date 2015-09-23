@@ -3,25 +3,31 @@
 let WebSocket = require('ws');
 
 class SocketConnection {
-  constructor (socket) {
-    Object.assign(this, {socket});
+  constructor (options) {
+    Object.assign(this, options);
+    this.socket.on('message', this.onMessage.bind(this));
   }
 
-  static connectingUpstream (upstreamConnectionString) {
+  static connectingUpstream (options) {
     return new Promise((resolve, reject) => {
-      let socket = new WebSocket(upstreamConnectionString);
+      let socket = new WebSocket(options.upstreamConnectionString);
       socket.on('open', () => {
-        let connection = new SocketConnection(socket);
+        let connectionOptions = {
+          socket,
+          server: options.server,
+          monitor: options.monitor
+        };
+        let connection = new SocketConnection(connectionOptions);
         resolve(connection);
       });
       socket.on('error', () => {
-        reject(new Error('failed connecting to upstream: ' + upstreamConnectionString));
+        reject(new Error('failed connecting to upstream: ' + options.upstreamConnectionString));
       });
     });
   }
 
-  static connectingDownstream (socket) {
-    return Promise.resolve(new SocketConnection(socket));
+  static connectingDownstream (options) {
+    return Promise.resolve(new SocketConnection(options));
   }
 
   sendingCommandUpstream (cmd) {
@@ -34,6 +40,27 @@ class SocketConnection {
         console.log('sent', cmd);
       });
     });
+  }
+
+  onMessage (data) {
+    var message = JSON.parse(data);
+    // console.log('received', message);
+    switch (message.type) {
+      case 'send-command':
+        let cmd = message.data;
+        if (!this.server.hasSeen(cmd)) {
+          this.server.processing(cmd).then(() => {
+            return this.monitor.logging({name: this.server.name, action: 'command', from: cmd.originator});
+          }).then(() => {
+            return this.server.repo.gettingRankSum();
+          }).then(rankSum => {
+            console.log('rank sum now:', rankSum);
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+        break;
+    }
   }
 }
 

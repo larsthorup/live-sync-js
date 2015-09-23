@@ -48,7 +48,12 @@ monitor.connecting().then(() => {
   let listeningDownstream = listener.listening();
   let bootingSteps = [listeningDownstream];
   if (args.flags.upstream) {
-    let connectingUpstream = SocketConnection.connectingUpstream(args.flags.upstream).then(connection => {
+    let connectionOptions = {
+      upstreamConnectionString: args.flags.upstream,
+      server,
+      monitor
+    };
+    let connectingUpstream = SocketConnection.connectingUpstream(connectionOptions).then(connection => {
       return server.connectingUpstream(connection);
     });
     bootingSteps.push(connectingUpstream);

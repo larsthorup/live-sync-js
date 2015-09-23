@@ -35,6 +35,14 @@ class Server {
     return Promise.all(sending);
   }
 
+  receiving (command) {
+    if (!this.hasSeen(command)) {
+      return this.processing(command);
+    } else {
+      return Promise.resolve();
+    }
+  }
+
   hasSeen (command) {
     return !!this.processedCommands[command.id];
   }
