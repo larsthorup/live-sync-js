@@ -69,8 +69,34 @@ describe('scenario', () => {
     this.serverEurope.repo.gettingRankSum('Peace').should.become(4)
   );
 
+  // Note: joining a new server
+  it('should enable adding a new server', () => {
+    this.serverAsia = new Server('Asia');
+    return StubConnection.connecting(this.serverAsia, this.serverGlobal);
+  });
+
+  it('should enable adding a new client', () => {
+    this.clientLakshmi = new Client('Lakshmi');
+    return StubConnection.connecting(this.clientLakshmi.server, this.serverAsia);
+  });
+
+  it('should not (should actually) sync data to the new client', () =>  // ToDo
+    this.clientLakshmi.server.repo.gettingRankSum('Peace').should.become(0)
+  );
+
+  it('should create data on new client', () =>
+    this.clientLakshmi.creatingRank('Peace', 7)
+  );
+
+  it('should sync data from new client to existing clients', () =>
+    this.clientSusan.server.repo.gettingRankSum('Peace').should.become(11)
+  );
+
+  it('should sync data from existing clients to new client', () =>
+    this.clientLakshmi.server.repo.gettingRankSum('Peace').should.become(11)
+  );
+
   // ToDo: aggregate rank sum instead of calculating
-  // ToDo: joining a new server
   // ToDo: taking a server offline for a while
   // ToDo: bringing a server online after a while
   // ToDo: retry synchronization when it fails
