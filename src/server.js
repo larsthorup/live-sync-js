@@ -19,6 +19,7 @@ class Server {
 
   connectingDownstream (connection) {
     this.downstreamConnections.push(connection);
+    return this.synchronizing();
   }
 
   synchronizing () {

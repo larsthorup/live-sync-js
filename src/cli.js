@@ -27,6 +27,7 @@ if (!args.flags.port) {
   process.exit(0);
 }
 
+// ToDo: refactor all this bootstrap code
 let client = args.flags.client ? new Client(args.flags.name) : null;
 let server = client ? client.server : new Server(args.flags.name);
 let monitor = new MonitorClient(args.flags.monitor);

@@ -80,8 +80,8 @@ describe('scenario', () => {
     return StubConnection.connecting(this.clientLakshmi.server, this.serverAsia);
   });
 
-  it('should not (should actually) sync data to the new client', () =>  // ToDo
-    this.clientLakshmi.server.repo.gettingRankSum('Peace').should.become(0)
+  it('should immediately sync data to the new client', () =>
+    this.clientLakshmi.server.repo.gettingRankSum('Peace').should.become(4)
   );
 
   it('should create data on new client', () =>
